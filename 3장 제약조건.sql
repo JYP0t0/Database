@@ -2,7 +2,10 @@
 #이름: 박준영
 #내용: 3장 제약 조건
 
-#실습 3-1
+#실습 3-1 기본키 
+# 테이블 내의 각 행을 고유하게 식별할 수 있는 하나의 열, 각 행의 데이터를 구분하는 식별자 역할 키
+# 중복이나 null 값을 입력할 수 없음
+# 하나의 테이블당 하나의 기본키만 지정 가능하며 index 지원으로 빠른 조회 가능
 CREATE TABLE `User2` (
 	`uid` VARCHAR(10) primary key,
     `name` VARCHAR(10),
@@ -20,6 +23,9 @@ INSERT INTO `User2` VALUES ('A105', '이순신', '1981-05-23', '부산시 진구
 
 
 #실습 3-3 고유키 실습하기
+#
+#
+#
 CREATE TABLE `User3`(
 	`uid` VARCHAR(10) PRIMARY KEY,
     `name` VARCHAR(10),
