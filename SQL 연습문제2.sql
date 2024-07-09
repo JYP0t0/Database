@@ -169,7 +169,14 @@ select `t_dist`, count(`t_no`) from `bank_transaction` group by `t_dist`;
 
 
 # 실습 2-23
-
+select 
+	`t_a_no`,
+    `t_dist`,
+    sum(`t_amount`)
+    from `bank_transaction`
+    where `t_dist` = 1
+    group by `t_a_no`;
+    
 
 
 # 실습 2-24
