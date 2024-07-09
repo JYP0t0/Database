@@ -114,16 +114,13 @@ select*from `product` where 1000 <= `price` and `price` <= 2000;
 select `custid`, `name`, `hp`, `addr` from `Customer` where `name` like '김__';
 #( '김%' = '김__' )
 
-
 #실습1-16 고객 테이블에서 고객 이름이 2자인 고객의 아이디, 이름, 휴대폰, 주소를 조회
 select `custid`, `name`, `hp`, `addr` from `Customer` where char_length(name) = 2;
 #(`length() 함수 조회`) 문자열일 경우 `char_length()` 함수 사용 or `name` like '__';
 
-
 #실습1-17 고객 테이블에서 휴대폰 번호가 입력되지 않은 고객 조회 
 select*from `customer` where `hp`is null;
 #(null값 조회) 칼럼명 + is null
-
 
 #실습1-18 고객 테이블에서 주소가 입력된 고객 조회
 select*from `customer` where `addr`  is not null;
@@ -134,51 +131,72 @@ select*from `customer` where `addr`  is not null;
 select*from `customer` order by `rdate` asc ;
 #(오름 내림차순 정렬 '실습 4-4' 참고)
 
-
 #실습1-20 주문 테이블에서 수량이 3개 이상인 주문내용 조회. 단 주문 수량으로 내림차순 정렬하고, 수량이 같으면 제품 번호를 기준으로 오름차순.
 select*from `order`where `orderCount` >= 3 
 order by `orderCount` desc, `orderProduct` asc;
-#( `orderProduct` asc; 마지막 이해 못함)
          
          
          
 #실습1-21 제품 테이블에서 모든 제품의 단가 평균 조회 
-select avg(price) as `평균` from `product`;
-# 평균 ( avg (칼럼) as `별칭` ) 실습 4-6 참고
+select avg(`price`) from product;
 
 
 #실습1-22 '농심'에서 제조한 제품의 재고량 합계 조회 
 select sum(`stock`) as '재고량 합계' from `product` where `company` = '농심';
-# 합계 ( sum (칼럼) as `별칭` )
 
 
 #실습1-23 고객 테이블에서 고객이 몇 명 등록되어 있는지 조회 
-select count(`custid`) as '고객 수' from `customer`;
-# 해당 열 칼럼 갯수 ( count (칼럼) as `별칭` )
+select count(`custid`) as `고객수` from `customer`;
 
 
 #실습1-24 제품 테이블에서 제조업체의 수를 조회
-select distinct count(`company`) as '제조업체 수' from `product`;
-# 중복 제외, 칼럼 개수
+select count(distinct`company`) as '제조업체 수' from `product`;
+
 
 #실습1-25 주문 테이블에서 주문제품별 수량의 합계 조회 
-
+SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+select 
+	`orderProduct` as `주문 상품번호`, 
+    sum(`orderCount`) as `총 주문수량` 
+    from `order` group by `orderProduct`;
 
 
 #실습1-26 제품 테이블에서 제조업체별 제조한 제품의 개수와 제품 중 가장 비싼 단가 조회 
-
+select
+	`company` as `제조업제`,
+    count(*) as `제품수`,max(`price`) as `최고가`
+    from `product` group by `company`;
 
 
 #실습1-27 제품 테이블에서 제품을 2개 이상 제조한 제조업체별로 제품의 개수와 제품 중 가장 비싼 단가 조회
-
-
+select 
+	`company` as `제조업체`,
+    count(*) as `제품수`,
+    max(`price`) as `최고가`
+    from `product` group by `company` 
+    having `제품수` >= 2;
 
 #실습1-28 주문 테이블에서 각 주문고객이 주문한 제품의 총 주문수량을 제품별로 조회 
-
+select 
+	`orderProduct`, 
+    `orderId`, 
+    sum(`orderCount`) as `총 주문수량` 
+    from `order` group by `orderId`, `orderProduct`;
 
 
 #실습1-29 'c102' 고객이 주문한 제품의 이름을 조회 
-
+select 
+	a.orderId,
+    b.prodName
+from `order` as a
+join `product` as b
+on a.orderProduct = b.prodNo
+where `orderId`='c102';
 
 
 #실습1-30 주문일자가 7월 3일인 고객의 아이디, 이름, 상품명 그리고 주문 날짜 시간 조회
+select `orderid`, `name`, `prodName`, `orderDate` from `Order` as a
+join `Customer` as b on a.orderId = b.custId
+join `Product` as c on a.orderProduct = c.prodNo
+where
+	substr(`orderDate`, 1, 10) = '2022-07-03';
