@@ -230,30 +230,66 @@ order by `합계` desc;
 
 
 
-#실습 4-12
+#실습 4-12 2개 이상의 테이블에서 투플 조회하기(중복데이터 제외) / union all 연산자는 중복된 행 포함
 create table `sales2` like `sales`; 				# 테이블 복사
 insert into `sales2` select * from `sales`; 		# 데이터 복사
 set sql_safe_updates=0;
 update `sales2` set `year` = `year` + 3; 
 
+select*from`sales`union select*from`sales2`;		# union: 두 개 이상의 쿼리 결과를 결합해 하나의 행 결과 집합으로 반환
 select * from `sales` where `sale` >= 100000
 union
 select * from `sales2` where `sale` >= 100000;
 
-#실습 4-13
-select * from `sales` inner join `member` on `sales` .`uid` = `member`.`uid`; # inner 생략 가능
-select * from `sales` as a join `member` as b on a.uid = b.uid;
-select * from `sales` as a join `member` using(`uid`);
-select *from `member` as a join `department` as b on a.dep = b.depNo;
-select 
-	a.`no`
-    a.`uid`
-	a.`sale`
-    b.`name`
-    b.`pos`
-    from `sales` as a join `member` using(`uid`);
+select`uid`, `year`, `sale` from `Sales`
+union
+select`uid`, `year`, `sale` from `sales2`;
+
+select`uid`, `year`, sum(sale) as `합계`from `sales` group by `uid`, `year`
+union
+select`uid`, `year`, sum(sale) as `합계`from `sales2` group by `uid`, `year`
+order by `year` asc, `합계` desc;
+
+
+#실습 4-13 내부 조인  ( inner join은 두 테이블 간의 공통된 컬럼을 기준으로 일치하는 행 결함 )
+select*from`sales`inner join `member` on `sales` .`uid` = `member`.`uid`; 	# inner 생략 가능
+select*from`member`inner join`department`on`member`.`dep` = `department`.`depNo`;
+
+select*from`sales`as a join `member` as b on a.uid = b.uid;					# 테이블 as 별칭  테이블을 별칭으로 지정
+select*from`member`as a join`department` as b on a.dep = b.depNo;
+
+select*from`sales`as a, `member`as b where a.uid = b.uid;					# join 대신 where을 사용한 테이블 결합 
+select*from`member`as a, `department`as b where a.dep = b.depNo;
+
+select a.`no`, a.`uid`, `sale`, `name`, `pos` from`sales` as a
+join `member` as b on a. `uid` = b.`uid`;
+
+select a.`no`, a.`uid`, `sale`, `name`, `pos` from`sales` as a				# using(): "()" 안의 컬럼을 기준으로 조인
+join `member` as b using (uid);
+
+select a.`no`, a.`uid`, `sale`, `name`, `pos` from`sales` as a 
+join `member` as b on a.`uid` = b.`uid`
+where `sale` >= 100000;
+
+select a.`no`, a.`uid`, b.`name`, b.`pos`, `year`, sum(`sale`) as `합계` 
+from`sales` as a join `member` as b on a.`uid` = b.`uid`
+group by a.`uid`, a.`year` having `합계` >= 100000
+order by `a.year` asc, `합계` desc;
+
+
+
+
+
 
 #실습 4-14
+# left join은 왼쪽 테이블의 모든 행을 포함하고, 오른쪽 테이블에서 왼쪽 테이블과 일치하는 행이 있는 경우 해당 행을 포함하는 조인
+select*from`sales` as a left join `member` as b on a.uid = b.uid;
+
+select*from`sales` as a right join `member` as b on a.uid = b.uid;
+
+select a.`no`, a.`uid`, `sale`, `name`, `pos` from `sales` as a left join `member` as b using(uid);
+
+select a.`no`, a.`uid`, `sale`, `name`, `pos` from `sales` as a right join `member` as b using(uid);
 
 #실습 4-15
 #실습 4-16
