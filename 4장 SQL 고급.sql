@@ -271,6 +271,8 @@ select a.`no`, a.`uid`, `sale`, `name`, `pos` from`sales` as a
 join `member` as b on a.`uid` = b.`uid`
 where `sale` >= 100000;
 
+# having  절은 group by 와 함께 사용하여 그룹화된 데이터에 대한 조건을 지정할 때 사용
+# where 절은 그룹화되기 전 각 행을 필터링, having 절은 그룹화된 데이터에 조건 적용
 select a.`no`, a.`uid`, b.`name`, b.`pos`, `year`, sum(`sale`) as `합계` 
 from`sales` as a join `member` as b on a.`uid` = b.`uid`
 group by a.`uid`, a.`year` having `합계` >= 100000
@@ -291,6 +293,29 @@ select a.`no`, a.`uid`, `sale`, `name`, `pos` from `sales` as a left join `membe
 
 select a.`no`, a.`uid`, `sale`, `name`, `pos` from `sales` as a right join `member` as b using(uid);
 
+
+
+
 #실습 4-15
+select a.uid, a.name, a.dep, b.name from `member` as a join `department` as b on a.dep = b.depNo;
+
 #실습 4-16
+select sum(sale) as '2019 매출의 합' 
+from sales as a join member as b on a.uid = b.uid 
+where name='김유신' and year=2019;
+
+
 #실습 4-17
+select 
+	b.`name` AS `직원명`,
+   c.`name` AS `부서명`,
+   b.`pos`  AS `직급`,
+   a.`year` AS `년도`,    
+   SUM(`sale`) as `매출합`
+from `Sales`      a
+join `Member`     b on a.uid = b.uid
+join `Department` c on b.dep = c.depNo
+where `year`=2019 and `sale` >= 50000
+group by a.`uid`
+having `매출합` >= 100000
+order by `매출합` DESC;
