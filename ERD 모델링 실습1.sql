@@ -1,6 +1,6 @@
 # 날짜: 2024/07/16
 # 이름: 박준영
-# 내용: ERD 모델링 실습1
+# 내용: ERD 모델링 실습2
 
 # ERD 생성 후 데이터 입력
 select*from departments;
